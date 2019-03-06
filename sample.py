@@ -1,10 +1,16 @@
 class Sample(object):
 
-    def __init__(self, hasHouse, married, income, hasLoan):
-        self.hasHouse = hasHouse
-        self.married = married
-        self.income = income
-        self.hasLoan = hasLoan
+    def __init__(self, result, *args):
+        self.result = result
+        self.attri = []
+        for arg in args:
+            self.attri.append(arg)
         
     def print(self):
-        print(self.hasHouse, self.married, self.income, self.hasLoan)
+        print(self.result, self.attri)
+
+    def getAttriNum(self):
+        return self.attri.
+
+    def getAttriOf(self, index):
+        return self.attri[index]

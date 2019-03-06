@@ -1,11 +1,7 @@
 import sys
 from sample import Sample
 
-def calcuGini(samples, i):
-    return 0.5
-
-if __name__ == "__main__":
-    # input
+def input():
     samples = []
     with open('input', 'r') as f:
         inputs = f.read().splitlines()
@@ -13,6 +9,12 @@ if __name__ == "__main__":
             s = input.split(' ')
             samples.append(Sample(s[0], s[1], s[2], s[3]))
     attributeUsed = [False, False, False]
+
+def calcuGini(samples, i):
+    return 0.5
+
+if __name__ == "__main__":
+    
     # select attribute
     for j in range(len(attributeUsed)):
         maxIndex = -1
