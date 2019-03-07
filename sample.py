@@ -10,7 +10,7 @@ class Sample(object):
         print(self.result, self.attri)
 
     def getAttriNum(self):
-        return self.attri.
+        return len(self.attri)
 
     def getAttriOf(self, index):
         return self.attri[index]
