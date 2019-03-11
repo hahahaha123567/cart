@@ -4,11 +4,12 @@ import copy
 FLAG = 65535
 
 class Node:
-    def __init__(self, attribute=None, key=None, leftChildren=None, rightChildren=None):
+    def __init__(self, sample=None, attribute=None, key=None, left=None, right=None):
+        self.sample = sample
         self.attribute = attribute
         self.key = key
-        self.leftChildren = leftChildren
-        self.rightChildren = rightChildren
+        self.left = left
+        self.right = right
 
 def input():
     file = pd.ExcelFile("data.xls")
