@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 import pandas as pd
 
@@ -28,6 +30,17 @@ def read_file(filename):
         else:
             data[0] = '正常'
     return attributes, data_set
+
+
+def split_test_data(data_set, ratio):
+    test_data = []
+    training_data = []
+    for data in data_set:
+        if random.random() < ratio:
+            test_data.append(data)
+        else:
+            training_data.append(data)
+    return test_data, training_data
 
 
 def split_data_set(attributes, data_set, attribute, key):
@@ -107,7 +120,36 @@ def calcu_cut_value(attributes, data_set):
     return final_cut_attribute, final_cut_value
 
 
+def verification(attributes, test_data, tree):
+    for data in test_data:
+        node = tree
+        while node.attribute is not None:
+            index = attributes.index(node.attribute)
+            value = data[index]
+            node = node.left if value <= node.key else node.right
+        data.append(node.result)
+
+
 if __name__ == "__main__":
     attributes, data_set = read_file('data.xls')
-    tree = create_tree(attributes, data_set)
-    print(tree.__repr__())
+    test_data, training_data = split_test_data(data_set, 0.3)
+    tree = create_tree(attributes, training_data)
+    # print(tree.__repr__())
+    verification(attributes, test_data, tree)
+    a, b, c, d = 0, 0, 0, 0
+    for data in test_data:
+        print(data)
+        if data[-1] == 'ST':
+            if data[0] == 'ST':
+                a += 1
+            else:
+                b += 1
+        else:
+            if data[0] == 'ST':
+                c += 1
+            else:
+                d += 1
+    print('预测', 'ST', '非ST')
+    print('实际')
+    print('  ST', a, c)
+    print('非ST', b, d)
