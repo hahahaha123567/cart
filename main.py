@@ -1,4 +1,5 @@
 import random
+import json
 
 import numpy as np
 import pandas as pd
@@ -23,12 +24,12 @@ def read_file(filename):
     attributes = data_set[0]
     attributes[0] = None
     data_set = data_set[1:]
-    # ST1 -> ST, 正常1 -> 正常
-    for data in data_set:
-        if data[0].startswith('ST'):
-            data[0] = 'ST'
-        else:
-            data[0] = '正常'
+    # # ST1 -> ST, 正常1 -> 正常
+    # for data in data_set:
+    #     if data[0].startswith('ST'):
+    #         data[0] = 'ST'
+    #     else:
+    #         data[0] = '正常'
     return attributes, data_set
 
 
@@ -61,7 +62,7 @@ def create_tree(attributes, data_set):
 
     # 如果遍历完所有特征，返回数据集中最多的类型
     if len(set(attributes)) == 1:
-        return Node(result='ST' if result_list.count('ST') > result_list.count('正常') else '正常')
+        return Node(result='ST' if result_list.count('ST') > result_list.count('Normal') else 'Normal')
 
     # 计算用来划分的属性和值
     cut_attribute, cut_value = calcu_cut_value(attributes, data_set)
@@ -100,15 +101,21 @@ def calcu_cut_value(attributes, data_set):
                 if data_set[t][index] <= cut_value:
                     if 'ST' == data_set[t][0]:
                         a += 1
-                    elif '正常' == data_set[t][0]:
+                    elif 'Normal' == data_set[t][0]:
                         b += 1
                 else:
                     if 'ST' == data_set[t][0]:
                         c += 1
-                    elif '正常' == data_set[t][0]:
+                    elif 'Normal' == data_set[t][0]:
                         d += 1
-            gini1 = 1 - 1.0 * (a * a + b * b) / ((a + b) * (a + b))
-            gini2 = 1 - 1.0 * (c * c + d * d) / ((c + d) * (c + d))
+            if a + b == 0:
+                gini1 = 1
+            else:
+                gini1 = 1 - 1.0 * (a * a + b * b) / ((a + b) * (a + b))
+            if c + d == 0:
+                gini2 = 1
+            else:
+                gini2 = 1 - 1.0 * (c * c + d * d) / ((c + d) * (c + d))
             gini = gini1 * (a + b) / (a + b + c + d) + gini2 * (c + d) / (a + b + c + d)
             if gini < attri_min_gini:
                 attri_min_gini = gini
@@ -118,6 +125,16 @@ def calcu_cut_value(attributes, data_set):
             final_cut_attribute = attribute
             final_cut_value = attri_cut_value
     return final_cut_attribute, final_cut_value
+
+
+def write_json_to_file(tree, file_name):
+    json_str = json.dumps(tree.__repr__(), ensure_ascii=False)
+    json_str = json_str.replace('\'', '"')
+    json_str = json_str.replace('None', 'null')
+    json_str = json_str[1:-1]
+    file = open(file_name, 'wb')
+    file.write(json_str.encode('utf8'))
+    file.close()
 
 
 def verification(attributes, test_data, tree):
@@ -131,14 +148,13 @@ def verification(attributes, test_data, tree):
 
 
 if __name__ == "__main__":
-    attributes, data_set = read_file('data.xls')
-    test_data, training_data = split_test_data(data_set, 0.3)
+    attributes, data_set = read_file('data.xlsx')
+    test_data, training_data = split_test_data(data_set, 0.1)
     tree = create_tree(attributes, training_data)
-    # print(tree.__repr__())
+    write_json_to_file(tree, 'tree.json')
     verification(attributes, test_data, tree)
     a, b, c, d = 0, 0, 0, 0
     for data in test_data:
-        print(data)
         if data[-1] == 'ST':
             if data[0] == 'ST':
                 a += 1
@@ -149,7 +165,7 @@ if __name__ == "__main__":
                 c += 1
             else:
                 d += 1
-    print('预测', 'ST', '非ST')
+    print('预测', 'ST', 'Normal')
     print('实际')
-    print('  ST', a, c)
-    print('非ST', b, d)
+    print('    ST', a, c)
+    print('Normal', b, d)
