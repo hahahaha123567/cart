@@ -6,7 +6,9 @@ function init() {
       initialContentAlignment: go.Spot.Left,
       allowSelect: false,  // the user cannot select any part
       // create a TreeLayout for the decision tree
-      layout: $(go.TreeLayout)
+      layout: $(go.TreeLayout, {
+				angle: 90
+      })
     })
 
   // get the text for the tooltip from the data on the object being hovered over
@@ -46,12 +48,12 @@ function init() {
       $(go.Shape, "Rectangle",
         { fill: "whitesmoke", stroke: "lightgray" }),
       // define a horizontal Panel to place the node's text alongside the buttons
-      $(go.Panel, "Horizontal",
+      $(go.Panel, "Vertical",
         $(go.TextBlock,
           { font: "20px Roboto, sans-serif", margin: 5 },
           new go.Binding("text", "key")),
         // define a vertical panel to place the node's two buttons one above the other
-        $(go.Panel, "Vertical",
+        $(go.Panel, "Horizontal",
           { defaultStretch: go.GraphObject.Fill, margin: 3 },
           $("Button",  // button A
             {
@@ -126,7 +128,8 @@ function makeMyNodes(model) {
   var nodeDataArray = []
   
   let tmp = new Object()
-  tmp.key = 'Start'
+  tree.key = tree.key.toFixed(3)
+  tmp.key = tree.attribute + ':' + tree.key
   tmp.category = 'decision'
   tmp.a = addNodeFromTree(nodeDataArray, tree.left).key
   tmp.aText = '<= ' + tree.key
@@ -141,7 +144,7 @@ function addNodeFromTree(nodeDataArray, node) {
   if (node === null) return null
   let tmp = new Object()
   if (node.result === null) {
-    node.key = node.key.toFixed(2)
+    node.key = node.key.toFixed(3)
 		tmp.key = node.attribute + ':' + node.key
     tmp.category = 'decision'
     tmp.a = addNodeFromTree(nodeDataArray, node.left).key
@@ -149,7 +152,7 @@ function addNodeFromTree(nodeDataArray, node) {
     tmp.b = addNodeFromTree(nodeDataArray, node.right).key
     tmp.bText = '> ' + node.key
   } else {
-    tmp.key = node.result + Math.random().toFixed(4)
+    tmp.key = Math.random()
     tmp.category = 'personality'
     tmp.text = node.result
   }
@@ -161,11 +164,6 @@ function makeMyLinks(model) {
   var linkDataArray = []
   var nda = model.nodeDataArray
   for (var i = 0; i < nda.length; i++) {
-    if (nda[i].key === 'Start') {
-      linkDataArray.push({ from: nda[i].key, fromport: nda[i].a, to: nda[i].a })
-      linkDataArray.push({ from: nda[i].key, fromport: nda[i].b, to: nda[i].b })
-      continue
-    }
     if (nda[i].a != undefined) {
       linkDataArray.push({ from: nda[i].key, fromport: nda[i].a, to: nda[i].a })
     }
