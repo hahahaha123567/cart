@@ -151,7 +151,7 @@ if __name__ == "__main__":
     attributes, training_data = read_file('data/training.xlsx')
     tmp, test_data = read_file('data/test.xlsx')
     tree = create_tree(attributes, training_data)
-    write_json_to_file(tree, 'tree.json')
+    write_json_to_file(tree, 'out/tree.json')
     verification(attributes, test_data, tree)
     a, b, c, d = 0, 0, 0, 0
     for data in test_data:
