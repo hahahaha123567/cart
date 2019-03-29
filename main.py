@@ -148,8 +148,8 @@ def verification(attributes, test_data, tree):
 
 
 if __name__ == "__main__":
-    attributes, data_set = read_file('data.xlsx')
-    test_data, training_data = split_test_data(data_set, 0.1)
+    attributes, training_data = read_file('data/training.xlsx')
+    tmp, test_data = read_file('data/test.xlsx')
     tree = create_tree(attributes, training_data)
     write_json_to_file(tree, 'tree.json')
     verification(attributes, test_data, tree)
@@ -166,6 +166,6 @@ if __name__ == "__main__":
             else:
                 d += 1
     print('预测', 'ST', 'Normal')
-    print('实际')
-    print('    ST', a, c)
+    print('实际\t')
+    print('ST\t\t', a, c)
     print('Normal', b, d)
