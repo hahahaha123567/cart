@@ -124,7 +124,7 @@ function readJsonFromFile(file) {
 }
 
 function makeMyNodes(model) {
-	let tree = readJsonFromFile('../tree.json')
+	let tree = readJsonFromFile('../out/tree.pruning.json')
   var nodeDataArray = []
   
   let tmp = new Object()
